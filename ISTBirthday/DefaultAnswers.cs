@@ -70,7 +70,7 @@ namespace ISTBirthday
                     {
                         try
                         {
-                            await telegramBotClient.SendTextMessageAsync(chatId, string.Join("\n\n", students1.Take(count).Select(stud => stud.FullInfo)), ParseMode.Html);
+                            await telegramBotClient.SendTextMessageAsync(chatId, string.Join("\n\n", students1.Take(count).Select(stud => stud.GetFullInfo())), ParseMode.Html);
                             students1 = students1.Skip(count);
                             break;
                         }
@@ -81,7 +81,7 @@ namespace ISTBirthday
         }
         public static async Task SendFind(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students, string keyString)
         {
-            var result = students.Where(stud => Fuzz.PartialTokenSetRatio(keyString, stud.KeyWords) > 75).ToArray();
+            var result = students.Where(stud => Fuzz.PartialTokenSetRatio(keyString, stud.GetKeyWords()) > 75).ToArray();
             if (result.Length == 0)
             {
                 await telegramBotClient.SendTextMessageAsync(chatId, $"Не удалось найти ни одного человека по ключевому слову: <b>{keyString}</b>", ParseMode.Html);
@@ -96,7 +96,7 @@ namespace ISTBirthday
                     {
                         try
                         {
-                            await telegramBotClient.SendTextMessageAsync(chatId, string.Join("\n\n", students1.Take(count).Select(stud => stud.FullInfo)), ParseMode.Html);
+                            await telegramBotClient.SendTextMessageAsync(chatId, string.Join("\n\n", students1.Take(count).Select(stud => stud.GetFullInfo())), ParseMode.Html);
                             students1 = students1.Skip(count);
                             break;
                         }
@@ -115,7 +115,7 @@ namespace ISTBirthday
             {
                 return;
             }
-            await telegramBotClient._MySendMesage(chatId, $"{student.FullName} сегодня празднует свой {DateTime.Today.Year - student.Birthday.Value.Year} день рождения🎂!\nНе забудьте написать ей/ему в этот замечательный день.\n{student.HowToRich}");
+            await telegramBotClient._MySendMesage(chatId, $"{student.FullName} сегодня празднует свой {DateTime.Today.Year - student.Birthday.Value.Year} день рождения🎂!\nНе забудьте написать ей/ему в этот замечательный день.\n{student.GetHowToRichString()}");
             
         }
         public static async Task Send1Days(this ITelegramBotClient telegramBotClient, ChatId chatId, Student student)

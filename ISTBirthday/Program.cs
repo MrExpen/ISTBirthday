@@ -69,7 +69,7 @@ namespace ISTBirthday
                             }
                             else if (update.Message.Text == "/allbirthdays")
                             {
-                                await _bot.SendAllBirthdays(update.Message.Chat.Id, db.Students.AsEnumerable().OrderBy(stud => stud.FullInfo));
+                                await _bot.SendAllBirthdays(update.Message.Chat.Id, db.Students.AsEnumerable().OrderBy(stud => stud.GetFullInfo()));
                             }
                             else if (update.Message.Text == "/allbirthdayssorted")
                             {
