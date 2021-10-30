@@ -23,8 +23,6 @@ namespace BithdayLibrary
                 Services
                 .Where(s => !string.IsNullOrEmpty(s.Name) && !string.IsNullOrEmpty(s.Data))
                 .Select(s => $"{s.Name}: " + (s.IsLink ? $"<a href=\"{s.Data}\">Link</a>" : s.Data)));
-        public long? VkId { get; set; }
-        public long? TelegramId { get; set; }
         [NotMapped]
         public string FullName => LastName + ' ' + FirstName;
         
