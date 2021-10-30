@@ -15,7 +15,7 @@ namespace BithdayLibrary.Services
         }
 
         public virtual long? _id { get; set; }
-        protected string _link { get; set; }
+        public string _link { get; set; }
 
 
 
