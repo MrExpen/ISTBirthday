@@ -17,9 +17,12 @@ namespace BithdayLibrary.Services
         public TelegramService(string link) : base("Telegram", link)
         {
         }
-
         public TelegramService(long id) : base("Telegram", id)
         {
+        }
+        public TelegramService() : base("Telegram")
+        {
+
         }
 
     }

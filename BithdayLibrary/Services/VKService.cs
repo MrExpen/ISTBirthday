@@ -18,9 +18,12 @@ namespace BithdayLibrary.Services
         public VKService(string link) : base("VK", link)
         {
         }
-
         public VKService(long id) : base("VK", id)
         {
+        }
+        public VKService() : base("VK")
+        {
+
         }
     }
 }

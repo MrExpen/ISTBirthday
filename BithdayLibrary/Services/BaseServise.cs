@@ -17,11 +17,15 @@ namespace BithdayLibrary.Services
         public virtual string Data { get; set; }
 
         public virtual bool IsLink { get; protected set; }
-        public BaseServise(string name, string data, bool isLink)
+        public BaseServise(string name, string data, bool isLink) : this()
         {
             Name = name;
             Data = data;
             IsLink = isLink;
+        }
+        public BaseServise()
+        {
+
         }
     }
 }

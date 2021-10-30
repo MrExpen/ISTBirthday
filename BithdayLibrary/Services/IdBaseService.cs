@@ -23,9 +23,17 @@ namespace BithdayLibrary.Services
         {
             Data = link;
         }
-        public IdBaseService(string name, long id) : base(name, null, true)
+        public IdBaseService(string name, long id) : this(name)
         {
             _id = id;
+        }
+        public IdBaseService(string name) : base(name, null, true)
+        {
+
+        }
+        public IdBaseService() : base()
+        {
+
         }
     }
 }
