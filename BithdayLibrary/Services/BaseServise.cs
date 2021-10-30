@@ -13,7 +13,6 @@ namespace BithdayLibrary.Services
         [Key]
         public long DbId { get; set; }
         public virtual string Name { get; set; }
-        [NotMapped]
         public virtual string Data { get; set; }
 
         public virtual bool IsLink { get; protected set; }

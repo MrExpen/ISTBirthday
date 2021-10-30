@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace BithdayLibrary.Services
 {
     public class VKService : IdBaseService
     {
+        [NotMapped]
         public override string Data 
         {
             get => base.Data ?? "https://vk.com/id" + _id; 
