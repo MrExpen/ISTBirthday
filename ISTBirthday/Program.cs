@@ -70,11 +70,11 @@ namespace ISTBirthday
                             }
                             else if (update.Message.Text == "/allbirthdays")
                             {
-                                await _bot.SendAllBirthdays(update.Message.Chat.Id, db.Students.AsEnumerable().OrderBy(stud => stud.GetFullInfo()));
+                                await _bot.SendAllBirthdays(update.Message.Chat.Id, db.Students.ToArray().OrderBy(stud => stud.GetFullInfo()));
                             }
                             else if (update.Message.Text == "/allbirthdayssorted")
                             {
-                                await _bot.SendAllBirthdaysSorted(update.Message.Chat.Id, db.Students);
+                                await _bot.SendAllBirthdaysSorted(update.Message.Chat.Id, db.Students.ToArray());
                             }
                             else if (update.Message.Text == "/nearestbirthday")
                             {
@@ -92,11 +92,11 @@ namespace ISTBirthday
                             }
                             else if (update.Message.Text == "/all")
                             {
-                                await _bot.SendAll(update.Message.Chat.Id, db.Students);
+                                await _bot.SendAll(update.Message.Chat.Id, db.Students.ToArray());
                             }
                             else if (update.Message.Text.StartsWith("/find "))
                             {
-                                await _bot.SendFind(update.Message.Chat.Id, db.Students, update.Message.Text.Substring(6).ToLower().Trim());
+                                await _bot.SendFind(update.Message.Chat.Id, db.Students.ToArray(), update.Message.Text.Substring(6).ToLower().Trim());
                             }
                         }
                         else

@@ -36,7 +36,7 @@ namespace ISTBirthday
             await telegramBotClient._MySendMesage(chatId, message);
         }
         public static async Task SendAllBirthdaysSorted(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
-            => await SendAllBirthdays(telegramBotClient, chatId, students.AsEnumerable().OrderBy(students => students.DaysLeft));
+            => await SendAllBirthdays(telegramBotClient, chatId, students.OrderBy(students => students.DaysLeft));
         public static async Task SendNearestBirthday(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
         {
             if (students.Count() == 0)
