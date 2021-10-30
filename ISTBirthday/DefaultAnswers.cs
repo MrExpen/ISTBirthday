@@ -15,44 +15,50 @@ namespace ISTBirthday
     {
         public static async Task SendWTF(this ITelegramBotClient telegramBotClient, ChatId chatId)
         {
-            await telegramBotClient.SendTextMessageAsync(chatId, "Я не могу разобрать, что вы хотите сказать.");
+            await telegramBotClient._MySendMesage(chatId, "Я не могу разобрать, что вы хотите сказать.");
         }
         public static async Task SendUseCommands(this ITelegramBotClient telegramBotClient, ChatId chatId)
         {
-            await telegramBotClient.SendTextMessageAsync(chatId, "Используйте команды начинающиеся с \"/\"");
+            await telegramBotClient._MySendMesage(chatId, "Используйте команды начинающиеся с \"/\"");
         }
         public static async Task SendStart(this ITelegramBotClient telegramBotClient, ChatId chatId)
         {
-            await telegramBotClient.SendTextMessageAsync(chatId, "Здравствуйте, надеюсь, я буду вам полезен)");
+            await telegramBotClient._MySendMesage(chatId, "Здравствуйте, надеюсь, я буду Вам полезен)");
         }
         public static async Task SendAllBirthdays(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
         {
             string message = string.Join('\n', students.Select(student => $"{student.FullName} - <b>{student.DaysLeft}</b>"));
             if (string.IsNullOrEmpty(message))
             {
-                message = "<b>База данных пуста.</b>";
+                await telegramBotClient._SendDbEmpty(chatId);
+                return;
             }
-            await telegramBotClient.SendTextMessageAsync(chatId, message, ParseMode.Html);
+            await telegramBotClient._MySendMesage(chatId, message);
         }
         public static async Task SendAllBirthdaysSorted(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
             => await SendAllBirthdays(telegramBotClient, chatId, students.AsEnumerable().OrderBy(students => students.DaysLeft));
         public static async Task SendNearestBirthday(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
         {
+            if (students.Count() == 0)
+            {
+                await telegramBotClient._SendDbEmpty(chatId);
+                return;
+            }
             var immediate = students.Where(student => student.DaysLeft.HasValue).GroupBy(students => students.DaysLeft.Value).OrderBy(students => students.Key).First();
 
             string message = "Ближайший день рождения:\n" + string.Join('\n', immediate.Select(student => $"<b>{student.FullName}</b> - {student.Birthday.Value.ToShortDateString()}")) + $"\nДо него остолось: <b>{immediate.Key}</b>";
 
-            await telegramBotClient.SendTextMessageAsync(chatId, message, ParseMode.Html);
+            await telegramBotClient._MySendMesage(chatId, message);
         }
         public static async Task SendNotify(this ITelegramBotClient telegramBotClient, ChatId chatId, bool state)
         {
-            await telegramBotClient.SendTextMessageAsync(chatId, state ? "<b>Уведомления включены</b>✅" : "<b>Уведомления выключены</b>❌", ParseMode.Html);
+            await telegramBotClient._MySendMesage(chatId, state ? "<b>Уведомления включены</b>✅" : "<b>Уведомления выключены</b>❌");
         }
         public static async Task SendAll(this ITelegramBotClient telegramBotClient, ChatId chatId, IEnumerable<Student> students)
         {
             if (students.Count() == 0)
             {
-                await telegramBotClient.SendTextMessageAsync(chatId, $"База ещё пуста.", ParseMode.Html);
+                await telegramBotClient._SendDbEmpty(chatId);
             }
             else
             {
@@ -109,11 +115,7 @@ namespace ISTBirthday
             {
                 return;
             }
-            try
-            {
-                await telegramBotClient.SendTextMessageAsync(chatId, $"{student.FullName} сегодня празднует свой {DateTime.Today.Year - student.Birthday.Value.Year} день рождения🎂!\nНе забудьте написать ей/ему в этот замечательный день.\n{student.VkLinkHTML}\n{student.TelegramLinkHtml}", ParseMode.Html);
-            }
-            catch { }
+            await telegramBotClient._MySendMesage(chatId, $"{student.FullName} сегодня празднует свой {DateTime.Today.Year - student.Birthday.Value.Year} день рождения🎂!\nНе забудьте написать ей/ему в этот замечательный день.\n{student.HowToRich}");
             
         }
         public static async Task Send1Days(this ITelegramBotClient telegramBotClient, ChatId chatId, Student student)
@@ -122,12 +124,7 @@ namespace ISTBirthday
             {
                 return;
             }
-            try
-            {
-                await telegramBotClient.SendTextMessageAsync(chatId, $"Завтра {student.FullName} станет на год старше🎉🎉", ParseMode.Html);
-            }
-            catch { }
-                    
+            await telegramBotClient._MySendMesage(chatId, $"Завтра {student.FullName} станет на год старше🎉🎉");
         }
         public static async Task Send5Days(this ITelegramBotClient telegramBotClient, ChatId chatId, Student student)
         {
@@ -135,13 +132,22 @@ namespace ISTBirthday
             {
                 return;
             }
+            await telegramBotClient._MySendMesage(chatId, $"Надеюсь ты не забыл, что <b>{student.FullName}</b> через 5 дней станет ещё старше!");
+        }
+        private static async Task _SendDbEmpty(this ITelegramBotClient telegramBotClient, ChatId chatId)
+        {
+            await telegramBotClient._MySendMesage(chatId, "<b>База данных пуста.</b>");
+        }
+        private static async Task _MySendMesage(this ITelegramBotClient telegramBotClient, ChatId chatId, string message)
+        {
             try
             {
-                await telegramBotClient.SendTextMessageAsync(chatId, $"Надеюсь ты не забыл, что <b>{student.FullName}</b> через 5 дней станет ещё старше!", ParseMode.Html);
+                await telegramBotClient.SendTextMessageAsync(chatId, message, ParseMode.Html);
             }
-            catch { }
-            
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
-
     }
 }
