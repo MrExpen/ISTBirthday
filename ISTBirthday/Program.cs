@@ -26,6 +26,7 @@ namespace ISTBirthday
             {
                 LogsPath.Create();
             }
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
         }
 
         static async Task Main(string[] args)
