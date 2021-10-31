@@ -207,11 +207,13 @@ namespace ISTBirthday
             }
             while (true)
             {
+                
                 using (var db = new ApplicationDbContext(_connectionString))
                 {
                     List<Task> tasks = new List<Task>();
-                    var a = db.Students.ToArray().GroupBy(stud => stud.DaysLeft);
-                    foreach (var group in a)
+                    var users = db.Users.ToArray();
+                    var gropedStudents = db.Students.ToArray().GroupBy(stud => stud.DaysLeft).ToArray();
+                    foreach (var group in gropedStudents)
                     {
                         if (!group.Key.HasValue)
                         {
@@ -219,7 +221,7 @@ namespace ISTBirthday
                         }
                         if (group.Key == 5)
                         {
-                            foreach (var user in db.Users)
+                            foreach (var user in users)
                             {
                                 foreach (var student in group)
                                 {
@@ -229,7 +231,7 @@ namespace ISTBirthday
                         }
                         else if (group.Key == 1)
                         {
-                            foreach (var user in db.Users)
+                            foreach (var user in users)
                             {
                                 foreach (var student in group)
                                 {
@@ -239,7 +241,7 @@ namespace ISTBirthday
                         }
                         else if (group.Key == 0)
                         {
-                            foreach (var user in db.Users)
+                            foreach (var user in users)
                             {
                                 foreach (var student in group)
                                 {
