@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BithdayLibrary.Services
 {
-    public class VKService : IdBaseService
+    public sealed class VKService : IdBaseService
     {
-        [NotMapped]
         public override string Data 
         {
             get => base.Data ?? "https://vk.com/id" + _id; 

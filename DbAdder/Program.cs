@@ -1,7 +1,8 @@
 ﻿using System;
 using BithdayLibrary;
-using System.Collections.Generic;
 using BithdayLibrary.Services;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DbAdder
 {
@@ -10,6 +11,7 @@ namespace DbAdder
         private static ApplicationDbContext _db = new ApplicationDbContext();
         static void Main(string[] args)
         {
+            
             _db.SaveChanges();
         }
     }

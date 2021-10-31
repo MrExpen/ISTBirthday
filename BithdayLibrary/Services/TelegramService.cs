@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BithdayLibrary.Services
 {
-    public class TelegramService : IdBaseService
+    public sealed class TelegramService : IdBaseService
     {
-        [NotMapped]
         public override string Data 
         {
             get => base.Data ?? "tg://user?id=" + _id;
