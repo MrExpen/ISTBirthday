@@ -58,7 +58,7 @@ namespace BithdayLibrary
             }
             if (!string.IsNullOrEmpty(Description))
             {
-                stringBuilder.AppendLine($"Дополнительно: {Description}");
+                stringBuilder.AppendLine($"Дополнительно: <b>{Description}</b>");
             }
 
             return stringBuilder.ToString();
