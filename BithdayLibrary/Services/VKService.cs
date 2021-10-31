@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BithdayLibrary.Services
 {
-    public sealed class VKService : IdBaseService
+    public class VKService : IdBaseService
     {
         public override string Data 
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BithdayLibrary.Services
 {
-    public sealed class TelegramService : IdBaseService
+    public class TelegramService : IdBaseService
     {
         public override string Data 
         {
