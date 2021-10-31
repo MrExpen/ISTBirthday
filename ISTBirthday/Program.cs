@@ -11,22 +11,108 @@ using Telegram.Bot.Types;
 using System.Collections.Generic;
 using System.Net.Http;
 
+//1927440684:AAGtyHOzzwxeYkR0f0dtKLI8lFs1FFz6udM
+//"server=127.0.0.1;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=ISTBirthdaysV2;"
+
 namespace ISTBirthday
 {
     class Program
     {
         private static readonly DirectoryInfo LogsPath;
         private static readonly TelegramBotClient _bot;
-
+        private static readonly string _connectionString;
+        private static readonly string _botToken;
+        private const string _connectionStringFileName = "connectionString.txt";
+        private const string _botTokenFileName = "token.txt";
         static Program()
         {
-            _bot = new TelegramBotClient("1927440684:AAGtyHOzzwxeYkR0f0dtKLI8lFs1FFz6udM");
+            
             LogsPath = new DirectoryInfo("logs");
             if (!LogsPath.Exists)
             {
                 LogsPath.Create();
             }
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                try
+                {
+                    if (new[] { "-h", "--help" }.Contains(args[i]))
+                    {
+                        Console.WriteLine("-h, --help - show this message.");
+                        Console.WriteLine("-tf --token-file - set a file name for bot token.");
+                        Console.WriteLine("-cf --connection-string-file - set a file name for db connection string.");
+                        Console.WriteLine("-t --tokene - set a bot token.");
+                        Console.WriteLine("-c --connection-string - set a db connection string.");
+                        Environment.Exit(0);
+                    }
+                    else if (new[] { "-tf", "--token-file" }.Contains(args[i]))
+                    {
+                        try
+                        {
+                            _botToken = System.IO.File.ReadAllText(args[i + 1]);
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            Console.WriteLine($"File {args[i + 1]} Not Found!");
+                            throw;
+                        }
+                    }
+                    else if (new[] { "-cf", "--connection-string-file" }.Contains(args[i]))
+                    {
+                        try
+                        {
+                            _connectionString = System.IO.File.ReadAllText(args[i + 1]);
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            Console.WriteLine($"File {args[i + 1]} Not Found!");
+                            throw;
+                        }
+                    }
+                    else if (new[] { "-t", "--token" }.Contains(args[i]))
+                    {
+                        _botToken = args[i + 1];
+                    }
+                    else if (new[] { "-c", "--connection-string" }.Contains(args[i]))
+                    {
+                        _connectionString = args[i + 1];
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Check your parametrs!");
+                    throw;
+                }
+                
+            }
+            if (string.IsNullOrEmpty(_botToken))
+            {
+                try
+                {
+                    _botToken = System.IO.File.ReadAllText(_botTokenFileName);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine($"File {_botTokenFileName} Not Found!");
+                    throw;
+                }
+            }
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                try
+                {
+                    _connectionString = System.IO.File.ReadAllText(_connectionStringFileName);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine($"File {_connectionStringFileName} Not Found!");
+                    throw;
+                }
+            }
+            
+            _bot = new TelegramBotClient(_botToken);
         }
 
         static async Task Main(string[] args)
@@ -58,7 +144,7 @@ namespace ISTBirthday
             {
                 if (update.Message.Type == MessageType.Text)
                 {
-                    using (var db = new ApplicationDbContext())
+                    using (var db = new ApplicationDbContext(_connectionString))
                     {
                         await System.IO.File.AppendAllTextAsync(Path.Combine(LogsPath.FullName, "messages.log"), $"{DateTime.Now}|{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}\n");
                         Console.WriteLine($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
@@ -121,7 +207,7 @@ namespace ISTBirthday
             }
             while (true)
             {
-                using (var db = new ApplicationDbContext())
+                using (var db = new ApplicationDbContext(_connectionString))
                 {
                     List<Task> tasks = new List<Task>();
                     var a = db.Students.ToArray().GroupBy(stud => stud.DaysLeft);

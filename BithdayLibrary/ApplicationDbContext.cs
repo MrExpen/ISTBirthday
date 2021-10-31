@@ -5,10 +5,12 @@ namespace BithdayLibrary
 {
     public class ApplicationDbContext : DbContext
     {
+        private readonly string _connectionString;
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
-        public ApplicationDbContext()
+        public ApplicationDbContext(string connectionString)
         {
+            _connectionString = connectionString;
             Database.EnsureCreated();
         }
 
@@ -25,7 +27,7 @@ namespace BithdayLibrary
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseMySql(
-                "server=127.0.0.1;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=ISTBirthdaysV2;",
+                _connectionString,
                 new MySqlServerVersion(new System.Version(8, 0, 27))
             );
             options.UseLazyLoadingProxies();
