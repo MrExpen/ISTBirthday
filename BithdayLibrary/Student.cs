@@ -24,7 +24,7 @@ namespace BithdayLibrary
             return string.Join("\n",
                 Services
                 .Where(s => !string.IsNullOrEmpty(s.Name) && !string.IsNullOrEmpty(s.Data))
-                .Select(s => $"{s.Name}: " + (s.IsLink ? $"<a href=\"{s.Data}\">Link</a>" : s.Data)));
+                .Select(s => $"{s.Name}: " + (s.IsLink ? $"<a href=\"{s.Data}\">Link</a>" : $"<b>s.Data</b>")));
         }
 
         [NotMapped]
