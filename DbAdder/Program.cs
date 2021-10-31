@@ -8,10 +8,9 @@ namespace DbAdder
 {
     class Program
     {
-        private static ApplicationDbContext _db = new ApplicationDbContext("server=127.0.0.1;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=ISTBirthdaysV2;");
+        private static ApplicationDbContext _db = new ApplicationDbContext("server=mrexpen.ru;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=_11BBirthdays;");
         static void Main(string[] args)
         {
-            
             _db.SaveChanges();
         }
     }
