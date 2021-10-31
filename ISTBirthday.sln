@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISTBirthday", "ISTBirthday\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BithdayLibrary", "BithdayLibrary\BithdayLibrary.csproj", "{A64846D2-F4E7-4505-A477-BB9ED8AD58AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbAdder", "DbAdder\DbAdder.csproj", "{462061D8-9196-4D60-8F64-F5FE09364EFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbAdder", "DbAdder\DbAdder.csproj", "{462061D8-9196-4D60-8F64-F5FE09364EFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
