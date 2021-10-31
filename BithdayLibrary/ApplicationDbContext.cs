@@ -5,9 +5,10 @@ namespace BithdayLibrary
 {
     public class ApplicationDbContext : DbContext
     {
-        private readonly string _connectionString;
+        private string _connectionString { get; init; }
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
+
         public ApplicationDbContext(string connectionString)
         {
             _connectionString = connectionString;
