@@ -4,8 +4,9 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using BirthdayLibrary.Utils;
 
-namespace BithdayLibrary
+namespace BirthdayLibrary
 {
     public class Student
     {
@@ -19,46 +20,47 @@ namespace BithdayLibrary
         public string Description { get; set; }
         public virtual List<Services.BaseServise> Services { get; set; } = new List<Services.BaseServise>();
 
-        public string GetHowToRichString()
+        public string GetHowToRichString(IServiceTextFormatter textFormatter)
         {
             return string.Join("\n",
                 Services
                 .Where(s => !string.IsNullOrEmpty(s.Name) && !string.IsNullOrEmpty(s.Data))
-                .Select(s => $"{s.Name}: " + (s.IsLink ? $"<a href=\"{s.Data}\">Link</a>" : $"<b>{s.Data}</b>")));
+                .Select(s => $"{s.Name}: " + 
+                (s.IsLink ? 
+                    textFormatter.Link(s.Data, "Link") :
+                    textFormatter.Bold(s.Data)))
+                );
         }
 
-        [NotMapped]
-        public string FullName => LastName + ' ' + FirstName;
-
-        public string GetFullInfo()
+        public string GetFullInfo(IServiceTextFormatter textFormatter)
         {
             StringBuilder stringBuilder = new StringBuilder();
             if (!string.IsNullOrEmpty(LastName))
             {
-                stringBuilder.AppendLine($"Фамилия: <b>{LastName}</b>");
+                stringBuilder.AppendLine($"Фамилия: " + textFormatter.Bold(LastName));
             }
             if (!string.IsNullOrEmpty(FirstName))
             {
-                stringBuilder.AppendLine($"Имя: <b>{FirstName}</b>");
+                stringBuilder.AppendLine($"Имя: " + textFormatter.Bold(FirstName));
             }
             if (!string.IsNullOrEmpty(Patronymic))
             {
-                stringBuilder.AppendLine($"Отчество: <b>{Patronymic}</b>");
+                stringBuilder.AppendLine($"Отчество: " + textFormatter.Bold(Patronymic));
             }
             if (Birthday.HasValue)
             {
-                stringBuilder.AppendLine($"Дата рождения: <b>{Birthday?.ToShortDateString()}</b>");
-                stringBuilder.AppendLine($"<b>({Birthday?.ToLongDateString()})</b>");
-                stringBuilder.AppendLine($"Дней осталось: <b>{DaysLeft}</b>");
+                stringBuilder.AppendLine($"Дата рождения: " + textFormatter.Bold(Birthday.Value.ToShortDateString()));
+                stringBuilder.AppendLine(textFormatter.Italic($"({Birthday.Value.ToLongDateString()})"));
+                stringBuilder.AppendLine($"Дней осталось: " + textFormatter.Bold(DaysLeft.Value.ToString()));
             }
-            var howToRich = GetHowToRichString();
+            var howToRich = GetHowToRichString(textFormatter);
             if (!string.IsNullOrEmpty(howToRich))
             {
                 stringBuilder.AppendLine(howToRich);
             }
             if (!string.IsNullOrEmpty(Description))
             {
-                stringBuilder.AppendLine($"Дополнительно: <b>{Description}</b>");
+                stringBuilder.AppendLine($"Дополнительно: " + textFormatter.Bold(Description));
             }
 
             return stringBuilder.ToString();
@@ -78,6 +80,9 @@ namespace BithdayLibrary
             }.Concat(Services.Where(s => !s.IsLink).Select(s => s.Data)).Where(x => !string.IsNullOrEmpty(x))
             );
         }
+
+        [NotMapped]
+        public string FullName => LastName + ' ' + FirstName;
 
         [NotMapped]
         public int? DaysLeft

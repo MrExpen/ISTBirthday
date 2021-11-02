@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BithdayLibrary.Services
+namespace BirthdayLibrary.Services
 {
     public class BaseServise : IService
     {

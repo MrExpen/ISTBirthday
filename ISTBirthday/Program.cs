@@ -1,18 +1,16 @@
-﻿using System;
-using Telegram.Bot;
+﻿using BirthdayLibrary;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Telegram.Bot.Extensions.Polling;
-using System.Threading.Tasks;
-using System.Threading;
-using BithdayLibrary;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types;
-using System.Collections.Generic;
 using System.Net.Http;
-
-//1927440684:AAGtyHOzzwxeYkR0f0dtKLI8lFs1FFz6udM
-//"server=127.0.0.1;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=ISTBirthdaysV2;"
+using System.Threading;
+using System.Threading.Tasks;
+using Telegram.Bot;
+using Telegram.Bot.Extensions.Polling;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
+using BirthdayLibrary.Utils;
 
 namespace ISTBirthday
 {
@@ -24,9 +22,9 @@ namespace ISTBirthday
         private static readonly string _botToken;
         private const string _connectionStringFileName = "connectionString.txt";
         private const string _botTokenFileName = "token.txt";
+        private static readonly IServiceTextFormatter _textFormatter;
         static Program()
         {
-            
             LogsPath = new DirectoryInfo("logs");
             if (!LogsPath.Exists)
             {
@@ -85,7 +83,7 @@ namespace ISTBirthday
                     Console.WriteLine("Check your parametrs!");
                     throw;
                 }
-                
+
             }
             if (string.IsNullOrEmpty(_botToken))
             {
@@ -111,7 +109,9 @@ namespace ISTBirthday
                     throw;
                 }
             }
-            
+
+            _textFormatter = new TelegramHTMLTextFormatter();
+
             _bot = new TelegramBotClient(_botToken);
         }
 
@@ -133,6 +133,7 @@ namespace ISTBirthday
             {
                 return;
             }
+            Console.WriteLine(exception);
             await System.IO.File.AppendAllTextAsync(Path.Combine(LogsPath.FullName, "exceptions.log"), $"{DateTime.Now}|{exception}\n\n");
         }
 
@@ -152,49 +153,49 @@ namespace ISTBirthday
                         {
                             if (update.Message.Text == "/start")
                             {
-                                await _bot.SendStart(update.Message.Chat.Id);
+                                await _bot.SendStart(update.Message.Chat.Id, _textFormatter);
                             }
                             else if (update.Message.Text == "/allbirthdays")
                             {
-                                await _bot.SendAllBirthdays(update.Message.Chat.Id, db.Students.ToArray().OrderBy(stud => stud.GetFullInfo()));
+                                await _bot.SendAllBirthdays(update.Message.Chat.Id, _textFormatter, db.Students.ToArray().OrderBy(stud => stud.FullName));
                             }
                             else if (update.Message.Text == "/allbirthdayssorted")
                             {
-                                await _bot.SendAllBirthdaysSorted(update.Message.Chat.Id, db.Students.ToArray());
+                                await _bot.SendAllBirthdaysSorted(update.Message.Chat.Id, _textFormatter, db.Students.ToArray());
                             }
                             else if (update.Message.Text == "/nearestbirthday")
                             {
-                                await _bot.SendNearestBirthday(update.Message.Chat.Id, db.Students);
+                                await _bot.SendNearestBirthday(update.Message.Chat.Id, _textFormatter, db.Students);
                             }
                             else if (update.Message.Text == "/notificate")
                             {
                                 var user = await db.Users.FindUserOrCreate(update.Message.Chat.Id);
                                 user.Notify = !user.Notify;
-                                await _bot.SendNotify(update.Message.Chat.Id, user.Notify);
+                                await _bot.SendNotify(update.Message.Chat.Id, _textFormatter, user.Notify);
                             }
                             else if (update.Message.Text == "/find")
                             {
-                                await _bot.SendFind(update.Message.Chat.Id);
+                                await _bot.SendFind(update.Message.Chat.Id, _textFormatter);
                             }
                             else if (update.Message.Text == "/all")
                             {
-                                await _bot.SendAll(update.Message.Chat.Id, db.Students.ToArray());
+                                await _bot.SendAll(update.Message.Chat.Id, _textFormatter, db.Students.ToArray().OrderBy(x => x.FullName));
                             }
                             else if (update.Message.Text.StartsWith("/find "))
                             {
-                                await _bot.SendFind(update.Message.Chat.Id, db.Students.ToArray(), update.Message.Text.Substring(6).ToLower().Trim());
+                                await _bot.SendFind(update.Message.Chat.Id, _textFormatter, db.Students.ToArray(), update.Message.Text.Substring(6).ToLower().Trim());
                             }
                         }
                         else
                         {
-                            await _bot.SendUseCommands(update.Message.Chat.Id);
+                            await _bot.SendUseCommands(update.Message.Chat.Id, _textFormatter);
                         }
                         await db.SaveChangesAsync();
                     }
                 }
                 else
                 {
-                    await _bot.SendWTF(update.Message.Chat.Id);
+                    await _bot.SendWTF(update.Message.Chat.Id, _textFormatter);
                 }
             }
         }
@@ -207,7 +208,7 @@ namespace ISTBirthday
             }
             while (true)
             {
-                
+
                 using (var db = new ApplicationDbContext(_connectionString))
                 {
                     List<Task> tasks = new List<Task>();
@@ -225,7 +226,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send5Days(user.Id, student));
+                                    tasks.Add(_bot.Send5Days(user.Id, _textFormatter, student));
                                 }
                             }
                         }
@@ -235,7 +236,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send1Days(user.Id, student));
+                                    tasks.Add(_bot.Send1Days(user.Id, _textFormatter, student));
                                 }
                             }
                         }
@@ -245,7 +246,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send0Days(user.Id, student));
+                                    tasks.Add(_bot.Send0Days(user.Id, _textFormatter, student));
                                 }
                             }
                         }

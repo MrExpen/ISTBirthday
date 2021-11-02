@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BithdayLibrary
+namespace BirthdayLibrary
 {
     public class User
     {

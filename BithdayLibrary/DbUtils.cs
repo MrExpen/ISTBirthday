@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace BithdayLibrary
+namespace BirthdayLibrary
 {
     public static class DbUtils
     {

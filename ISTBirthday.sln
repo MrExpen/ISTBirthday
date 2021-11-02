@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ISTBirthday", "ISTBirthday\ISTBirthday.csproj", "{9413AB1F-AD21-4BE3-888E-C2A390D54B34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BithdayLibrary", "BithdayLibrary\BithdayLibrary.csproj", "{A64846D2-F4E7-4505-A477-BB9ED8AD58AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirthdayLibrary", "BithdayLibrary\BirthdayLibrary.csproj", "{A64846D2-F4E7-4505-A477-BB9ED8AD58AB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbAdder", "DbAdder\DbAdder.csproj", "{462061D8-9196-4D60-8F64-F5FE09364EFB}"
 EndProject

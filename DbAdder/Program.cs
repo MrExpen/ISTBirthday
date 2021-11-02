@@ -1,6 +1,6 @@
 ﻿using System;
-using BithdayLibrary;
-using BithdayLibrary.Services;
+using BirthdayLibrary;
+using BirthdayLibrary.Services;
 using System.Collections.Generic;
 using System.Linq;
 

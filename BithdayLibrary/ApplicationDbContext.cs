@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BithdayLibrary.Services;
+using BirthdayLibrary.Services;
 
-namespace BithdayLibrary
+namespace BirthdayLibrary
 {
     public class ApplicationDbContext : DbContext
     {
