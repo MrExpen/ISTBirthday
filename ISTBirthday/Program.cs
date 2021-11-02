@@ -11,12 +11,13 @@ using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using BirthdayLibrary.Utils;
+using log4net;
 
 namespace ISTBirthday
 {
     class Program
     {
-        private static readonly DirectoryInfo LogsPath;
+        private static readonly ILog _log;
         private static readonly TelegramBotClient _bot;
         private static readonly string _connectionString;
         private static readonly string _botToken;
@@ -25,11 +26,6 @@ namespace ISTBirthday
         private static readonly IServiceTextFormatter _textFormatter;
         static Program()
         {
-            LogsPath = new DirectoryInfo("logs");
-            if (!LogsPath.Exists)
-            {
-                LogsPath.Create();
-            }
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
             var args = Environment.GetCommandLineArgs();
             for (int i = 0; i < args.Length; i++)
@@ -53,7 +49,7 @@ namespace ISTBirthday
                         }
                         catch (FileNotFoundException)
                         {
-                            Console.WriteLine($"File {args[i + 1]} Not Found!");
+                            _log.Fatal($"File {args[i + 1]} Not Found!");
                             throw;
                         }
                     }
@@ -65,7 +61,7 @@ namespace ISTBirthday
                         }
                         catch (FileNotFoundException)
                         {
-                            Console.WriteLine($"File {args[i + 1]} Not Found!");
+                            _log.Fatal($"File {args[i + 1]} Not Found!");
                             throw;
                         }
                     }
@@ -80,7 +76,7 @@ namespace ISTBirthday
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Console.WriteLine("Check your parametrs!");
+                    _log.Fatal("Check your parametrs!");
                     throw;
                 }
 
@@ -93,7 +89,7 @@ namespace ISTBirthday
                 }
                 catch (FileNotFoundException)
                 {
-                    Console.WriteLine($"File {_botTokenFileName} Not Found!");
+                    _log.Fatal($"File {_botTokenFileName} Not Found!");
                     throw;
                 }
             }
@@ -105,11 +101,12 @@ namespace ISTBirthday
                 }
                 catch (FileNotFoundException)
                 {
-                    Console.WriteLine($"File {_connectionStringFileName} Not Found!");
+                    _log.Fatal($"File {_connectionStringFileName} Not Found!");
                     throw;
                 }
             }
 
+            _log = LogManager.GetLogger("Program");
             _textFormatter = new TelegramHTMLTextFormatter();
 
             _bot = new TelegramBotClient(_botToken);
@@ -118,7 +115,7 @@ namespace ISTBirthday
         static async Task Main(string[] args)
         {
             var me = await _bot.GetMeAsync();
-            Console.WriteLine($"{me.Username}[{me.Id}]");
+            _log.Info($"{me.Username}[{me.Id}]");
 
             using var cts = new CancellationTokenSource();
 
@@ -127,14 +124,15 @@ namespace ISTBirthday
             await NotifyLoop();
         }
 
-        private static async Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)
+        private static Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken cancellationToken)
         {
             if (exception is HttpRequestException)
             {
-                return;
+                return Task.CompletedTask;
             }
-            Console.WriteLine(exception);
-            await System.IO.File.AppendAllTextAsync(Path.Combine(LogsPath.FullName, "exceptions.log"), $"{DateTime.Now}|{exception}\n\n");
+            _log.Fatal(exception.Message, exception);
+
+            return Task.CompletedTask;
         }
 
         private static async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
@@ -148,7 +146,7 @@ namespace ISTBirthday
                     using (var db = new ApplicationDbContext(_connectionString))
                     {
                         await System.IO.File.AppendAllTextAsync(Path.Combine(LogsPath.FullName, "messages.log"), $"{DateTime.Now}|{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}\n");
-                        Console.WriteLine($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
+                        _log.Info($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
                         if (update.Message.Text.StartsWith("/"))
                         {
                             if (update.Message.Text == "/start")
