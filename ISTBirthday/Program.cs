@@ -147,7 +147,6 @@ namespace ISTBirthday
                 {
                     using (var db = new ApplicationDbContext(_connectionString))
                     {
-                        await System.IO.File.AppendAllTextAsync(Path.Combine(LogsPath.FullName, "messages.log"), $"{DateTime.Now}|{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}\n");
                         _log.Info($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
                         if (update.Message.Text.StartsWith("/"))
                         {
