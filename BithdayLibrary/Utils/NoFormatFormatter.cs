@@ -9,6 +9,14 @@ namespace BirthdayLibrary.Utils
     public class NoFormatFormatter : BaseServiceTextFormatter, IServiceTextFormatter
     {
         public override string Format(string text, Format format, string linkText = null, string language = null)
-            => text;
+        {
+            switch (format)
+            {
+                case Utils.Format.Link:
+                    return $"{linkText} ({text})";
+                default:
+                    return text;
+            }
+        }
     }
 }
