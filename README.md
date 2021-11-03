@@ -1,5 +1,6 @@
 # ISTBirthday
-## This is a telegram bot written in C# designed to remind people about the birthdays of people added to the MySQL database. The database is generated based on Entity Framework Core models. The Model(Student) has such fields as: 
+## This is a telegram bot written in C# designed to remind people about the birthdays of people added to the MySQL database. The database is generated based on Entity Framework Core models. 
+#### The Model(Student) has such fields as: 
 * name
 * surname
 * patronymic
