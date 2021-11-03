@@ -13,11 +13,20 @@
 
 #### To use the application, you need to configure MySQL server version 8.0.
 
+## If command line arguments are passed, environment variables will be ignored.
+
 ### Environment Variables:
 Name  | Description
 :---  | :---
 TOKEN | Token for telegram bot
 CONNECTION_STRING | Connection string for MySQL server 8.0.*
+
+### Command line arguments:
+Short | Alternative | Action
+:--- | :--- | :---
+-h | --help | show help message.
+-t | --token | set a bot token.
+-c | --connection-string | set a db connection string.
   
 ### Bot commands(RU):
 *  allbirthdays - список всех дней рождений
