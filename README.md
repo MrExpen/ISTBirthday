@@ -21,8 +21,7 @@ Input parameters:
 * -c, --connection-string         - set a db connection string.
 * --log-config                    - set a xml config for log4net (log4net.config by default).
   
-Bot commands(RU):
-*  allbirthdays - список всех дней рождений
+Bot commands(RU):*  allbirthdays - список всех дней рождений
 *  allbirthdayssorted - отсортированный список всех дней рождений
 *  nearestbirthday - информация о ближайшем дне рождения
 *  notificate - изменение состояния уведомлений
