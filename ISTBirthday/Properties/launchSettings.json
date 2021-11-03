@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ISTBirthday": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

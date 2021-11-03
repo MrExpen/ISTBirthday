@@ -21,14 +21,15 @@ namespace ISTBirthday
         private static readonly TelegramBotClient _bot;
         private static readonly string _connectionString;
         private static readonly string _botToken;
-        private const string _connectionStringFileName = "connectionString.txt";
-        private const string _botTokenFileName = "token.txt";
         private static string _configFile = "log4net.config";
         private static readonly IServiceTextFormatter _textFormatter;
-        public static readonly string BotNickName;
         static Program()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
+
+            _botToken = Environment.GetEnvironmentVariable("TOKEN");
+            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
             var args = Environment.GetCommandLineArgs();
             for (int i = 0; i < args.Length; i++)
             {
@@ -44,30 +45,6 @@ namespace ISTBirthday
                         Console.WriteLine("--log-config - set a xml config for log4net.");
                         Environment.Exit(0);
                     }
-                    else if (new[] { "-tf", "--token-file" }.Contains(args[i]))
-                    {
-                        try
-                        {
-                            _botToken = System.IO.File.ReadAllText(args[++i]);
-                        }
-                        catch (FileNotFoundException)
-                        {
-                            _log.Fatal($"File {args[i]} Not Found!");
-                            throw;
-                        }
-                    }
-                    else if (new[] { "-cf", "--connection-string-file" }.Contains(args[i]))
-                    {
-                        try
-                        {
-                            _connectionString = System.IO.File.ReadAllText(args[++i]);
-                        }
-                        catch (FileNotFoundException)
-                        {
-                            _log.Fatal($"File {args[i]} Not Found!");
-                            throw;
-                        }
-                    }
                     else if (new[] { "-t", "--token" }.Contains(args[i]))
                     {
                         _botToken = args[++i];
@@ -76,56 +53,29 @@ namespace ISTBirthday
                     {
                         _connectionString = args[++i];
                     }
-                    else if (args[i] == "--log-config")
-                    {
-                        _configFile = args[++i];
-                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
                     Console.WriteLine("Check your parametrs!");
                     throw;
                 }
-
-            }
-            if (string.IsNullOrEmpty(_botToken))
-            {
-                try
-                {
-                    _botToken = System.IO.File.ReadAllText(_botTokenFileName);
-                }
-                catch (FileNotFoundException)
-                {
-                    _log.Fatal($"File {_botTokenFileName} Not Found!");
-                    throw;
-                }
-            }
-            if (string.IsNullOrEmpty(_connectionString))
-            {
-                try
-                {
-                    _connectionString = System.IO.File.ReadAllText(_connectionStringFileName);
-                }
-                catch (FileNotFoundException)
-                {
-                    _log.Fatal($"File {_connectionStringFileName} Not Found!");
-                    throw;
-                }
             }
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
+            _log = LogManager.GetLogger("Program");
 
             _textFormatter = new TelegramHTMLTextFormatter();
 
+            _log = LogManager.GetLogger("Program");
+
             _bot = new TelegramBotClient(_botToken);
-            var me = _bot.GetMeAsync().GetAwaiter().GetResult();
-            BotNickName = me.Username;
-            _log = LogManager.GetLogger(BotNickName);
-            _log.Info($"{me.Username}[{me.Id}]");
         }
 
         static async Task Main(string[] args)
         {
+            var me = await _bot.GetMeAsync();
+            _log.Info($"{me.Username}[{me.Id}]");
+
             using var cts = new CancellationTokenSource();
 
             _bot.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), cts.Token);

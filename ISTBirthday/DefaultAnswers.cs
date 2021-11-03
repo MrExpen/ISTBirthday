@@ -1,20 +1,19 @@
-﻿using System;
+﻿using BirthdayLibrary;
+using BirthdayLibrary.Utils;
+using FuzzySharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using BirthdayLibrary.Utils;
-using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types;
 using System.Threading.Tasks;
-using BirthdayLibrary;
-using FuzzySharp;
+using Telegram.Bot;
+using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace ISTBirthday
 {
     public static class DefaultAnswers
     {
-        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(Program.BotNickName);
+        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger("DefaultAnswers");
         public static async Task SendWTF(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter)
         {
             await telegramBotClient._MySendMessage(chatId, textFormatter, "Я не могу разобрать, что вы хотите сказать.");
@@ -76,7 +75,7 @@ namespace ISTBirthday
                 return;
             }
             await telegramBotClient._MySendMessage(chatId, textFormatter, $"{textFormatter.Bold(student.FullName)} сегодня празднует свой {textFormatter.Bold((DateTime.Today.Year - student.Birthday.Value.Year).ToString())} день рождения🎂!\nНе забудьте написать ей/ему в этот замечательный день.\n{student.GetHowToRichString(textFormatter)}");
-            
+
         }
         public static async Task Send1Days(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, Student student)
         {

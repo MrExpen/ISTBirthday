@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BirthdayLibrary", "BithdayL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbAdder", "DbAdder\DbAdder.csproj", "{462061D8-9196-4D60-8F64-F5FE09364EFB}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{2A7F962F-53C1-4A56-B820-85E8170E4DC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{462061D8-9196-4D60-8F64-F5FE09364EFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{462061D8-9196-4D60-8F64-F5FE09364EFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{462061D8-9196-4D60-8F64-F5FE09364EFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A7F962F-53C1-4A56-B820-85E8170E4DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A7F962F-53C1-4A56-B820-85E8170E4DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A7F962F-53C1-4A56-B820-85E8170E4DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A7F962F-53C1-4A56-B820-85E8170E4DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
