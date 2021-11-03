@@ -6,7 +6,7 @@ The Model(Student) has such fields as:
 * -patronymic
 * -date of birth
 * -contact information
-and so on.
+* and so on.
 
 
 To build this application you need .NET 5 SDK.
