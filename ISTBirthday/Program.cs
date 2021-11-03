@@ -27,13 +27,46 @@ namespace ISTBirthday
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
 
-            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             _botToken = Environment.GetEnvironmentVariable("TOKEN");
+            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+            var args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                try
+                {
+                    if (new[] { "-h", "--help" }.Contains(args[i]))
+                    {
+                        Console.WriteLine("-h, --help - show this message.");
+                        Console.WriteLine("-tf --token-file - set a file name for bot token.");
+                        Console.WriteLine("-cf --connection-string-file - set a file name for db connection string.");
+                        Console.WriteLine("-t --tokene - set a bot token.");
+                        Console.WriteLine("-c --connection-string - set a db connection string.");
+                        Console.WriteLine("--log-config - set a xml config for log4net.");
+                        Environment.Exit(0);
+                    }
+                    else if (new[] { "-t", "--token" }.Contains(args[i]))
+                    {
+                        _botToken = args[++i];
+                    }
+                    else if (new[] { "-c", "--connection-string" }.Contains(args[i]))
+                    {
+                        _connectionString = args[++i];
+                    }
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Console.WriteLine("Check your parametrs!");
+                    throw;
+                }
+            }
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
             _log = LogManager.GetLogger("Program");
 
             _textFormatter = new TelegramHTMLTextFormatter();
+
+            _log = LogManager.GetLogger("Program");
 
             _bot = new TelegramBotClient(_botToken);
         }
