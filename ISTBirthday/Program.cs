@@ -23,7 +23,9 @@ namespace ISTBirthday
         private static readonly string _botToken;
         private const string _connectionStringFileName = "connectionString.txt";
         private const string _botTokenFileName = "token.txt";
+        private static string _configFile = "log4net.config";
         private static readonly IServiceTextFormatter _textFormatter;
+        public static readonly string BotNickName;
         static Program()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
@@ -39,6 +41,7 @@ namespace ISTBirthday
                         Console.WriteLine("-cf --connection-string-file - set a file name for db connection string.");
                         Console.WriteLine("-t --tokene - set a bot token.");
                         Console.WriteLine("-c --connection-string - set a db connection string.");
+                        Console.WriteLine("--log-config - set a xml config for log4net.");
                         Environment.Exit(0);
                     }
                     else if (new[] { "-tf", "--token-file" }.Contains(args[i]))
@@ -73,10 +76,18 @@ namespace ISTBirthday
                     {
                         _connectionString = args[i + 1];
                     }
+                    else if (args[i] == "--log-config")
+                    {
+                        _configFile = args[i + 1];
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException();
+                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    _log.Fatal("Check your parametrs!");
+                    Console.WriteLine("Check your parametrs!");
                     throw;
                 }
 
@@ -106,19 +117,18 @@ namespace ISTBirthday
                 }
             }
 
-            log4net.Config.XmlConfigurator.Configure(new FileInfo("log4net.config"));
+            log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
 
-            _log = LogManager.GetLogger($"Program({Guid.NewGuid()})");
             _textFormatter = new TelegramHTMLTextFormatter();
 
             _bot = new TelegramBotClient(_botToken);
+            var me = _bot.GetMeAsync().GetAwaiter().GetResult();
+            BotNickName = me.Username;
+            _log = LogManager.GetLogger(BotNickName);
         }
 
         static async Task Main(string[] args)
         {
-            var me = await _bot.GetMeAsync();
-            _log.Info($"{me.Username}[{me.Id}]");
-
             using var cts = new CancellationTokenSource();
 
             _bot.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), cts.Token);
