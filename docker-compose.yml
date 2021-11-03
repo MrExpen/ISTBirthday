@@ -1,8 +1,11 @@
 version: '3.4'
 
 services:
-  istbirthday:
+  istbirthday1:
     image: ${DOCKER_REGISTRY-}istbirthday
+    environment:
+      TOKEN: ""
+      CONNECTION_STRING: ""
     build:
       context: .
       dockerfile: ISTBirthday/Dockerfile

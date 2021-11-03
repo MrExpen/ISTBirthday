@@ -21,97 +21,15 @@ namespace ISTBirthday
         private static readonly TelegramBotClient _bot;
         private static readonly string _connectionString;
         private static readonly string _botToken;
-        private const string _connectionStringFileName = "connectionString.txt";
-        private const string _botTokenFileName = "token.txt";
         private static string _configFile = "log4net.config";
         private static readonly IServiceTextFormatter _textFormatter;
         public static readonly string BotNickName;
         static Program()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
-            var args = Environment.GetCommandLineArgs();
-            for (int i = 0; i < args.Length; i++)
-            {
-                try
-                {
-                    if (new[] { "-h", "--help" }.Contains(args[i]))
-                    {
-                        Console.WriteLine("-h, --help - show this message.");
-                        Console.WriteLine("-tf --token-file - set a file name for bot token.");
-                        Console.WriteLine("-cf --connection-string-file - set a file name for db connection string.");
-                        Console.WriteLine("-t --tokene - set a bot token.");
-                        Console.WriteLine("-c --connection-string - set a db connection string.");
-                        Console.WriteLine("--log-config - set a xml config for log4net.");
-                        Environment.Exit(0);
-                    }
-                    else if (new[] { "-tf", "--token-file" }.Contains(args[i]))
-                    {
-                        try
-                        {
-                            _botToken = System.IO.File.ReadAllText(args[++i]);
-                        }
-                        catch (FileNotFoundException)
-                        {
-                            _log.Fatal($"File {args[i]} Not Found!");
-                            throw;
-                        }
-                    }
-                    else if (new[] { "-cf", "--connection-string-file" }.Contains(args[i]))
-                    {
-                        try
-                        {
-                            _connectionString = System.IO.File.ReadAllText(args[++i]);
-                        }
-                        catch (FileNotFoundException)
-                        {
-                            _log.Fatal($"File {args[i]} Not Found!");
-                            throw;
-                        }
-                    }
-                    else if (new[] { "-t", "--token" }.Contains(args[i]))
-                    {
-                        _botToken = args[++i];
-                    }
-                    else if (new[] { "-c", "--connection-string" }.Contains(args[i]))
-                    {
-                        _connectionString = args[++i];
-                    }
-                    else if (args[i] == "--log-config")
-                    {
-                        _configFile = args[++i];
-                    }
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    Console.WriteLine("Check your parametrs!");
-                    throw;
-                }
 
-            }
-            if (string.IsNullOrEmpty(_botToken))
-            {
-                try
-                {
-                    _botToken = System.IO.File.ReadAllText(_botTokenFileName);
-                }
-                catch (FileNotFoundException)
-                {
-                    _log.Fatal($"File {_botTokenFileName} Not Found!");
-                    throw;
-                }
-            }
-            if (string.IsNullOrEmpty(_connectionString))
-            {
-                try
-                {
-                    _connectionString = System.IO.File.ReadAllText(_connectionStringFileName);
-                }
-                catch (FileNotFoundException)
-                {
-                    _log.Fatal($"File {_connectionStringFileName} Not Found!");
-                    throw;
-                }
-            }
+            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            _botToken = Environment.GetEnvironmentVariable("TOKEN");
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
 
