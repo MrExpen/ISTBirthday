@@ -121,7 +121,7 @@ namespace ISTBirthday
             var me = _bot.GetMeAsync().GetAwaiter().GetResult();
             BotNickName = me.Username;
             _log = LogManager.GetLogger(BotNickName);
-            _log.Info($"{me.Username}({me.Id})");
+            _log.Info($"{me.Username}[{me.Id}]");
         }
 
         static async Task Main(string[] args)
