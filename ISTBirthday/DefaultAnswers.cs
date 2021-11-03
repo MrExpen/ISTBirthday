@@ -98,16 +98,24 @@ namespace ISTBirthday
         {
             await telegramBotClient._MySendMessage(chatId, textFormatter, textFormatter.Bold("База данных пуста."));
         }
-        private static async Task _MySendMessage(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, string message, ParseMode parseMode = ParseMode.Html)
+        private static async Task _MySendMessage(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, string message, int retries = 3, int timeOut = 1000, ParseMode parseMode = ParseMode.Html)
         {
-            try
+            int attempt = 0;
+
+            while (++attempt <= retries)
             {
-                await telegramBotClient.SendTextMessageAsync(chatId, message, parseMode);
+                try
+                {
+                    await telegramBotClient.SendTextMessageAsync(chatId, message, parseMode);
+                    return;
+                }
+                catch (Exception e)
+                {
+                    _log.Error($"Attemt: {attempt}, {e.Message}", e);
+                }
+                await Task.Delay(timeOut);
             }
-            catch (Exception e)
-            {
-                _log.Error(e.Message, e);
-            }
+            _log.Error($"Failed to send a message to {chatId.Username}[{chatId.Identifier}] after {retries} attempts");
         }
         private static async Task _MySendMessages(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, IEnumerable<string> messages, string separator, string textBefore = null, string textAfter = null)
         {
