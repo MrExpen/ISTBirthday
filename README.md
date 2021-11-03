@@ -23,10 +23,10 @@ Input parameters:
 * --log-config                    - set a xml config for log4net (log4net.config by default).
   
 Bot commands(RU):
-  allbirthdays - список всех дней рождений
-  allbirthdayssorted - отсортированный список всех дней рождений
-  nearestbirthday - информация о ближайшем дне рождения
-  notificate - изменение состояния уведомлений
-  all - информация о всех людях в базе
-  find - поиск по ключевому слову
-  start - начало работы
+*  allbirthdays - список всех дней рождений
+*  allbirthdayssorted - отсортированный список всех дней рождений
+*  nearestbirthday - информация о ближайшем дне рождения
+*  notificate - изменение состояния уведомлений
+*  all - информация о всех людях в базе
+*  find - поиск по ключевому слову
+*  start - начало работы
