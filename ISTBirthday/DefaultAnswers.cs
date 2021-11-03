@@ -14,7 +14,7 @@ namespace ISTBirthday
 {
     public static class DefaultAnswers
     {
-        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(Program.BotNickName);
+        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger("DefaultAnswers");
         public static async Task SendWTF(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter)
         {
             await telegramBotClient._MySendMessage(chatId, textFormatter, "Я не могу разобрать, что вы хотите сказать.");

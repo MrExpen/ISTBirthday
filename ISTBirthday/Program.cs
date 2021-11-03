@@ -23,7 +23,6 @@ namespace ISTBirthday
         private static readonly string _botToken;
         private static string _configFile = "log4net.config";
         private static readonly IServiceTextFormatter _textFormatter;
-        public static readonly string BotNickName;
         static Program()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
@@ -32,18 +31,18 @@ namespace ISTBirthday
             _botToken = Environment.GetEnvironmentVariable("TOKEN");
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
+            _log = LogManager.GetLogger("Program");
 
             _textFormatter = new TelegramHTMLTextFormatter();
 
             _bot = new TelegramBotClient(_botToken);
-            var me = _bot.GetMeAsync().GetAwaiter().GetResult();
-            BotNickName = me.Username;
-            _log = LogManager.GetLogger(BotNickName);
-            _log.Info($"{me.Username}[{me.Id}]");
         }
 
         static async Task Main(string[] args)
         {
+            var me = await _bot.GetMeAsync();
+            _log.Info($"{me.Username}[{me.Id}]");
+
             using var cts = new CancellationTokenSource();
 
             _bot.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), cts.Token);
