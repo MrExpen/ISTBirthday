@@ -82,7 +82,7 @@ namespace ISTBirthday
                     }
                     else
                     {
-                        throw new InvalidOperationException();
+                        throw new InvalidOperationException(args[i]);
                     }
                 }
                 catch (IndexOutOfRangeException)
