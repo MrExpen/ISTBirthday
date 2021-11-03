@@ -31,4 +31,4 @@
 *  start - начало работы
 
 
-###### *P.S. (All passwords and tokens that were revealed in early commits have already been reset or changed (I didn't think I would want to put the source code into an open repository))*
+###### *P.S. (All passwords and tokens that were revealed in early commits have already been reset or changed (I didn't think I would want to put the source code into an public repository))*
