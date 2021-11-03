@@ -80,10 +80,6 @@ namespace ISTBirthday
                     {
                         _configFile = args[++i];
                     }
-                    else
-                    {
-                        throw new InvalidOperationException(args[i]);
-                    }
                 }
                 catch (IndexOutOfRangeException)
                 {
