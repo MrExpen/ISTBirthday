@@ -14,7 +14,9 @@
 #### To use the application, you need to configure MySQL server version 8.0.
 
 ### Input parameters:
-* -h, --help                      - show help message.
+Short | Alternative | Action
+--- | ------- | ---:
+-h | --help | show help message.
 * -tf, --token-file               - set a file name for bot token (token.txt by default).
 * -cf, --connection-string-file   - set a file name for db connection string (connectionString.txt by default).
 * -t, --token                     - set a bot token.
