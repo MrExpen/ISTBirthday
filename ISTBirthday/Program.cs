@@ -48,11 +48,11 @@ namespace ISTBirthday
                     {
                         try
                         {
-                            _botToken = System.IO.File.ReadAllText(args[i + 1]);
+                            _botToken = System.IO.File.ReadAllText(args[++i]);
                         }
                         catch (FileNotFoundException)
                         {
-                            _log.Fatal($"File {args[i + 1]} Not Found!");
+                            _log.Fatal($"File {args[i]} Not Found!");
                             throw;
                         }
                     }
@@ -60,25 +60,25 @@ namespace ISTBirthday
                     {
                         try
                         {
-                            _connectionString = System.IO.File.ReadAllText(args[i + 1]);
+                            _connectionString = System.IO.File.ReadAllText(args[++i]);
                         }
                         catch (FileNotFoundException)
                         {
-                            _log.Fatal($"File {args[i + 1]} Not Found!");
+                            _log.Fatal($"File {args[i]} Not Found!");
                             throw;
                         }
                     }
                     else if (new[] { "-t", "--token" }.Contains(args[i]))
                     {
-                        _botToken = args[i + 1];
+                        _botToken = args[++i];
                     }
                     else if (new[] { "-c", "--connection-string" }.Contains(args[i]))
                     {
-                        _connectionString = args[i + 1];
+                        _connectionString = args[++i];
                     }
                     else if (args[i] == "--log-config")
                     {
-                        _configFile = args[i + 1];
+                        _configFile = args[++i];
                     }
                     else
                     {
