@@ -62,6 +62,7 @@ namespace ISTBirthday
             }
 
             log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
+            _log = LogManager.GetLogger("Program");
 
             _textFormatter = new TelegramHTMLTextFormatter();
 
