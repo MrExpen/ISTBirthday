@@ -9,8 +9,7 @@ The Model(Student) has such fields as:
 * *and so on.*
 
 
-To build this application you need .NET 5 SDK.
-Check: https://dotnet.microsoft.com/download
+To build this application you need [.NET 5 SDK](https://dotnet.microsoft.com/download).
 
 To use the application, you need to configure MySQL server version 8.0.
 
