@@ -61,7 +61,7 @@ namespace ISTBirthday
             }
             else
             {
-                await telegramBotClient._MySendMessages(chatId, textFormatter, students.Select(stud => stud.GetFullInfo(textFormatter)), "\n\n");
+                await telegramBotClient._MySendMessages(chatId, textFormatter, result.Select(stud => stud.GetFullInfo(textFormatter)), "\n\n");
             }
         }
         public static async Task SendFind(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter)
