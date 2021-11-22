@@ -49,9 +49,16 @@ namespace BirthdayLibrary
             }
             if (Birthday.HasValue)
             {
-                stringBuilder.AppendLine($"Дата рождения: " + textFormatter.Bold(Birthday.Value.ToShortDateString()));
+                int _Years(DateTime start, DateTime end)
+                {
+                    return (end.Year - start.Year - 1) +
+                        (((end.Month > start.Month) ||
+                        ((end.Month == start.Month) && (end.Day >= start.Day))) ? 1 : 0);
+                }
+                stringBuilder.AppendLine("Полных лет: " + textFormatter.Bold(_Years(Birthday.Value, DateTime.Now).ToString()));
+                stringBuilder.AppendLine("Дата рождения: " + textFormatter.Bold(Birthday.Value.ToShortDateString()));
                 stringBuilder.AppendLine(textFormatter.Italic($"({Birthday.Value.ToLongDateString()})"));
-                stringBuilder.AppendLine($"Дней осталось: " + textFormatter.Bold(DaysLeft.Value.ToString()));
+                stringBuilder.AppendLine("Дней осталось: " + textFormatter.Bold(DaysLeft.Value.ToString()));
             }
             var howToRich = GetHowToRichString(textFormatter);
             if (!string.IsNullOrEmpty(howToRich))

@@ -8,17 +8,13 @@ namespace DbAdder
 {
     class Program
     {
-        private static ApplicationDbContext _db = new ApplicationDbContext("server=mrexpen.ru;user=mrexpen;password=m{V8[W?THnf@GHVckkv3'7=Rbm/2P=QC._L8br*^Dk;database=_11BBirthdays;");
+        private static ApplicationDbContext _db = new ApplicationDbContext("server=mrexpen.ru;user=mrexpen;password=;database=ISTBirthdaysV2;");
         static void Main(string[] args)
         {
-            _db.Students.First(x => x.LastName == "Чибриков").Services.AddRange(
-            new[]
+            foreach (var item in _db.Students.ToArray())
             {
-                new TelegramService(651057170),
-                new BaseServise("Instagram", "mrexpen_", false)
-            });
-
-            _db.SaveChanges();
+                Console.WriteLine(item.GetFullInfo(new BirthdayLibrary.Utils.NoFormatFormatter()));
+            }
         }
     }
 }
