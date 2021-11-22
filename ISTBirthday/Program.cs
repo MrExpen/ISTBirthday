@@ -168,7 +168,7 @@ namespace ISTBirthday
                 using (var db = new ApplicationDbContext(_connectionString))
                 {
                     List<Task> tasks = new List<Task>();
-                    var users = db.Users.ToArray();
+                    var users = db.Users.Where(u => u.Notify).ToArray();
                     var gropedStudents = db.Students.ToArray().GroupBy(stud => stud.DaysLeft).ToArray();
                     foreach (var group in gropedStudents)
                     {
