@@ -17,18 +17,17 @@ namespace ISTBirthday
 {
     class Program
     {
-        private static readonly ILog _log;
-        private static readonly TelegramBotClient _bot;
-        private static readonly string _connectionString;
-        private static readonly string _botToken;
-        private static string _configFile = "log4net.config";
-        private static readonly IServiceTextFormatter _textFormatter;
+        private static readonly ILog Log;
+        private static readonly TelegramBotClient Bot;
+        private static readonly string ConnectionString;
+        private static readonly string ConfigFile = "log4net.config";
+        private static readonly IServiceTextFormatter TextFormatter;
         static Program()
         {
             System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo("RU");
 
-            _botToken = Environment.GetEnvironmentVariable("TOKEN");
-            _connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+            var botToken = Environment.GetEnvironmentVariable("TOKEN");
+            ConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
 
             var args = Environment.GetCommandLineArgs();
             for (int i = 0; i < args.Length; i++)
@@ -39,46 +38,41 @@ namespace ISTBirthday
                     {
                         Console.WriteLine("-h, --help - show this message.");
                         Console.WriteLine("-tf --token-file - set a file name for bot token.");
-                        Console.WriteLine("-cf --connection-string-file - set a file name for db connection string.");
-                        Console.WriteLine("-t --tokene - set a bot token.");
+                        Console.WriteLine("-t --token - set a bot token.");
                         Console.WriteLine("-c --connection-string - set a db connection string.");
                         Console.WriteLine("--log-config - set a xml config for log4net.");
                         Environment.Exit(0);
                     }
                     else if (new[] { "-t", "--token" }.Contains(args[i]))
                     {
-                        _botToken = args[++i];
-                    }
-                    else if (new[] { "-c", "--connection-string" }.Contains(args[i]))
-                    {
-                        _connectionString = args[++i];
+                        botToken = args[++i];
                     }
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    Console.WriteLine("Check your parametrs!");
+                    Console.WriteLine("Check your parameters!");
                     throw;
                 }
             }
 
-            log4net.Config.XmlConfigurator.Configure(new FileInfo(_configFile));
-            _log = LogManager.GetLogger("Program");
+            log4net.Config.XmlConfigurator.Configure(new FileInfo(ConfigFile));
+            Log = LogManager.GetLogger("Program");
 
-            _textFormatter = new TelegramHTMLTextFormatter();
+            TextFormatter = new TelegramHTMLTextFormatter();
 
-            _log = LogManager.GetLogger("Program");
+            Log = LogManager.GetLogger("Program");
 
-            _bot = new TelegramBotClient(_botToken);
+            Bot = new TelegramBotClient(botToken);
         }
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
-            var me = await _bot.GetMeAsync();
-            _log.Info($"{me.Username}[{me.Id}]");
+            var me = await Bot.GetMeAsync();
+            Log.Info($"{me.Username}[{me.Id}]");
 
             using var cts = new CancellationTokenSource();
 
-            _bot.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), cts.Token);
+            Bot.StartReceiving(new DefaultUpdateHandler(HandleUpdateAsync, HandleErrorAsync), cts.Token);
 
             await NotifyLoop();
         }
@@ -89,7 +83,7 @@ namespace ISTBirthday
             {
                 return Task.CompletedTask;
             }
-            _log.Fatal(exception.Message, exception);
+            Log.Fatal(exception.Message, exception);
 
             return Task.CompletedTask;
         }
@@ -102,56 +96,56 @@ namespace ISTBirthday
             {
                 if (update.Message.Type == MessageType.Text)
                 {
-                    using (var db = new ApplicationDbContext(_connectionString))
+                    using (var db = new ApplicationDbContext())
                     {
-                        _log.Info($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
+                        Log.Info($"{update.Message.From.Username}[{update.Message.From.Id}]: {update.Message.Text}");
                         if (update.Message.Text.StartsWith("/"))
                         {
                             if (update.Message.Text == "/start")
                             {
-                                await _bot.SendStart(update.Message.Chat.Id, _textFormatter);
+                                await Bot.SendStart(update.Message.Chat.Id, TextFormatter);
                             }
                             else if (update.Message.Text == "/allbirthdays")
                             {
-                                await _bot.SendAllBirthdays(update.Message.Chat.Id, _textFormatter, db.Students.ToArray().OrderBy(stud => stud.FullName));
+                                await Bot.SendAllBirthdays(update.Message.Chat.Id, TextFormatter, db.Students.ToArray().OrderBy(stud => stud.FullName));
                             }
                             else if (update.Message.Text == "/allbirthdayssorted")
                             {
-                                await _bot.SendAllBirthdaysSorted(update.Message.Chat.Id, _textFormatter, db.Students.ToArray());
+                                await Bot.SendAllBirthdaysSorted(update.Message.Chat.Id, TextFormatter, db.Students.ToArray());
                             }
                             else if (update.Message.Text == "/nearestbirthday")
                             {
-                                await _bot.SendNearestBirthday(update.Message.Chat.Id, _textFormatter, db.Students);
+                                await Bot.SendNearestBirthday(update.Message.Chat.Id, TextFormatter, db.Students);
                             }
                             else if (update.Message.Text == "/notificate")
                             {
                                 var user = await db.Users.FindUserOrCreate(update.Message.Chat.Id);
                                 user.Notify = !user.Notify;
-                                await _bot.SendNotify(update.Message.Chat.Id, _textFormatter, user.Notify);
+                                await Bot.SendNotify(update.Message.Chat.Id, TextFormatter, user.Notify);
                             }
                             else if (update.Message.Text == "/find")
                             {
-                                await _bot.SendFind(update.Message.Chat.Id, _textFormatter);
+                                await Bot.SendFind(update.Message.Chat.Id, TextFormatter);
                             }
                             else if (update.Message.Text == "/all")
                             {
-                                await _bot.SendAll(update.Message.Chat.Id, _textFormatter, db.Students.ToArray().OrderBy(x => x.FullName));
+                                await Bot.SendAll(update.Message.Chat.Id, TextFormatter, db.Students.ToArray().OrderBy(x => x.FullName));
                             }
                             else if (update.Message.Text.StartsWith("/find "))
                             {
-                                await _bot.SendFind(update.Message.Chat.Id, _textFormatter, db.Students.ToArray(), update.Message.Text.Substring(6).ToLower().Trim());
+                                await Bot.SendFind(update.Message.Chat.Id, TextFormatter, db.Students.ToArray(), update.Message.Text.Substring(6).ToLower().Trim());
                             }
                         }
                         else
                         {
-                            await _bot.SendUseCommands(update.Message.Chat.Id, _textFormatter);
+                            await Bot.SendUseCommands(update.Message.Chat.Id, TextFormatter);
                         }
                         await db.SaveChangesAsync();
                     }
                 }
                 else
                 {
-                    await _bot.SendWTF(update.Message.Chat.Id, _textFormatter);
+                    await Bot.SendWTF(update.Message.Chat.Id, TextFormatter);
                 }
             }
         }
@@ -165,7 +159,7 @@ namespace ISTBirthday
             while (true)
             {
 
-                using (var db = new ApplicationDbContext(_connectionString))
+                using (var db = new ApplicationDbContext())
                 {
                     List<Task> tasks = new List<Task>();
                     var users = db.Users.Where(u => u.Notify).ToArray();
@@ -182,7 +176,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send5Days(user.Id, _textFormatter, student));
+                                    tasks.Add(Bot.Send5Days(user.Id, TextFormatter, student));
                                 }
                             }
                         }
@@ -192,7 +186,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send1Days(user.Id, _textFormatter, student));
+                                    tasks.Add(Bot.Send1Days(user.Id, TextFormatter, student));
                                 }
                             }
                         }
@@ -202,7 +196,7 @@ namespace ISTBirthday
                             {
                                 foreach (var student in group)
                                 {
-                                    tasks.Add(_bot.Send0Days(user.Id, _textFormatter, student));
+                                    tasks.Add(Bot.Send0Days(user.Id, TextFormatter, student));
                                 }
                             }
                         }

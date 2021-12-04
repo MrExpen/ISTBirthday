@@ -67,7 +67,7 @@ namespace BirthdayLibrary
             }
             if (!string.IsNullOrEmpty(Description))
             {
-                stringBuilder.AppendLine($"Дополнительно: " + textFormatter.Bold(Description));
+                stringBuilder.AppendLine("Дополнительно: " + textFormatter.Bold(Description));
             }
 
             return stringBuilder.ToString();

@@ -1,18 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using BirthdayLibrary.Services;
 
 namespace BirthdayLibrary
 {
     public class ApplicationDbContext : DbContext
     {
-        private string _connectionString { get; init; }
         public DbSet<Student> Students { get; set; }
         public DbSet<User> Users { get; set; }
 
-        public ApplicationDbContext(string connectionString)
+        public ApplicationDbContext()
         {
-            _connectionString = connectionString;
-            Database.EnsureCreated();
+            
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -25,13 +27,16 @@ namespace BirthdayLibrary
                 .WithOne()
                 .OnDelete(DeleteBehavior.Cascade);
         }
-        protected override void OnConfiguring(DbContextOptionsBuilder options)
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            options.UseMySql(
-                _connectionString,
-                new MySqlServerVersion(new System.Version(8, 0, 27))
-            );
-            options.UseLazyLoadingProxies();
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder
+                    .UseMySql(Environment.GetEnvironmentVariable("CONNECTION_STRING"), new MySqlServerVersion("8.0"),
+                        optionsBuilder => optionsBuilder.EnableRetryOnFailure()).UseLazyLoadingProxies();
+            }
+            base.OnConfiguring(optionsBuilder);
         }
     }
 }
