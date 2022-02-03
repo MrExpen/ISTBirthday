@@ -85,6 +85,14 @@ namespace ISTBirthday
             }
             await telegramBotClient._MySendMessage(chatId, textFormatter, $"Завтра {textFormatter.Bold(student.FullName)} станет на год старше🎉🎉");
         }
+        public static async Task Send10Days(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, Student student)
+        {
+            if (student.DaysLeft != 10)
+            {
+                return;
+            }
+            await telegramBotClient._MySendMessage(chatId, textFormatter, $"Надеюсь ты не забыл, что {textFormatter.Bold(student.FullName)} через 10 дней станет на год старше!");
+        }
         public static async Task Send5Days(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, Student student)
         {
             if (student.DaysLeft != 5)

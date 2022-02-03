@@ -140,7 +140,7 @@ namespace ISTBirthday
                         {
                             await Bot.SendUseCommands(update.Message.Chat.Id, TextFormatter);
                         }
-                        await db.SaveChangesAsync();
+                        await db.SaveChangesAsync(cancellationToken);
                     }
                 }
                 else
@@ -166,41 +166,35 @@ namespace ISTBirthday
                     var gropedStudents = db.Students.ToArray().GroupBy(stud => stud.DaysLeft).ToArray();
                     foreach (var group in gropedStudents)
                     {
-                        if (!group.Key.HasValue)
+                        switch (group.Key)
                         {
-                            continue;
-                        }
-                        if (group.Key == 5)
-                        {
-                            foreach (var user in users)
+                            case 10:
                             {
-                                foreach (var student in group)
-                                {
-                                    tasks.Add(Bot.Send5Days(user.Id, TextFormatter, student));
-                                }
-                            }
-                        }
-                        else if (group.Key == 1)
-                        {
-                            foreach (var user in users)
-                            {
-                                foreach (var student in group)
-                                {
-                                    tasks.Add(Bot.Send1Days(user.Id, TextFormatter, student));
-                                }
-                            }
-                        }
-                        else if (group.Key == 0)
-                        {
-                            foreach (var user in users)
-                            {
-                                foreach (var student in group)
-                                {
-                                    tasks.Add(Bot.Send0Days(user.Id, TextFormatter, student));
-                                }
-                            }
-                        }
+                                tasks.AddRange(from user in users from student in @group select Bot.Send10Days(user.Id, TextFormatter, student));
 
+                                break;
+                            }
+                            case 5:
+                            {
+                                tasks.AddRange(from user in users from student in @group select Bot.Send5Days(user.Id, TextFormatter, student));
+
+                                break;
+                            }
+                            case 1:
+                            {
+                                tasks.AddRange(from user in users from student in @group select Bot.Send1Days(user.Id, TextFormatter, student));
+
+                                break;
+                            }
+                            case 0:
+                            {
+                                tasks.AddRange(from user in users from student in @group select Bot.Send0Days(user.Id, TextFormatter, student));
+
+                                break;
+                            }
+                            default:
+                                continue;
+                        }
                     }
                     await Task.WhenAll(tasks);
                     await Task.Delay(DateTime.Today.AddDays(1).AddHours(6) - DateTime.Now);
