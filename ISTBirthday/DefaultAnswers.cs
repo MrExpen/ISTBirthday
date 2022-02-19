@@ -57,7 +57,7 @@ namespace ISTBirthday
             var result = students
                 .Select(stud => (Students: stud, Ratio: Fuzz.PartialTokenSetRatio(keyString, stud.GetKeyWords())))
                 .Where(stud => stud.Ratio > lowesRatio)
-                .OrderBy(stud => stud.Ratio)
+                .OrderByDescending(stud => stud.Ratio)
                 .Select(stud => stud.Students)
                 .ToArray();
             if (result.Length == 0)
