@@ -52,9 +52,14 @@ namespace ISTBirthday
         {
             await telegramBotClient._MySendMessages(chatId, textFormatter, students.Select(stud => stud.GetFullInfo(textFormatter)), "\n\n");
         }
-        public static async Task SendFind(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, IEnumerable<Student> students, string keyString)
+        public static async Task SendFind(this ITelegramBotClient telegramBotClient, ChatId chatId, IServiceTextFormatter textFormatter, IEnumerable<Student> students, string keyString, double lowesRatio=75)
         {
-            var result = students.Where(stud => Fuzz.PartialTokenSetRatio(keyString, stud.GetKeyWords()) > 75).ToArray();
+            var result = students
+                .Select(stud => (Students: stud, Ratio: Fuzz.PartialTokenSetRatio(keyString, stud.GetKeyWords())))
+                .Where(stud => stud.Ratio > lowesRatio)
+                .OrderBy(stud => stud.Ratio)
+                .Select(stud => stud.Students)
+                .ToArray();
             if (result.Length == 0)
             {
                 await telegramBotClient._MySendMessage(chatId, textFormatter, "Не удалось найти ни одного человека по ключевому слову: " + textFormatter.Bold(keyString));
